@@ -1,12 +1,12 @@
 <% attributes("layout") = "" %>
 <html>
 <head>
+
+  <link rel="stylesheet" type="text/css" href="css/layout.css">
   <title>title</title>
 </head>
 <body>
-  <p>Harry</p>
-
-
-  <p>layout footer goes here...</p>
+  <canvas id="canvas"style="border:0px solid #000000;"></canvas>
+  <script src="js/canvas.js"></script>
 </body>
 </html>
