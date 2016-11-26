@@ -1,0 +1,12 @@
+<% attributes("layout") = "" %>
+<html>
+<head>
+  <title>title</title>
+</head>
+<body>
+  <p>Harry</p>
+
+
+  <p>layout footer goes here...</p>
+</body>
+</html>
