@@ -10,7 +10,7 @@ import android.webkit.WebViewClient;
 
 public class web_main extends Activity {
 
-    public static final String IP = "10.154.169.21:8080";
+    public static final String IP = "http://10.154.134.37:8080";//"http://10.154.169.21:8080";
 
     private WebView webView;
 
