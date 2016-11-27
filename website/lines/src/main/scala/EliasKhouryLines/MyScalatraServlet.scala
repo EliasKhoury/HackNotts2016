@@ -33,7 +33,7 @@ class MyScalatraServlet extends ScalatraServlet
     layoutTemplate("index.ssp")
   }
 
-  atmosphere("/the-chat") {
+  atmosphere("/lines") {
     new AtmosphereClient {
       def receive: AtmoReceive = {
         case Connected =>

@@ -14,6 +14,11 @@
     <listener-class>org.scalatra.servlet.ScalatraListener</listener-class>
   </listener>
 
+  <init-param>
+      <param-name>org.atmosphere.useStream</param-name>
+      <param-value>false</param-value>
+  </init-param>
+
   <servlet-mapping>
     <servlet-name>default</servlet-name>
     <url-pattern>/img/*</url-pattern>
