@@ -31,7 +31,7 @@ $(function() {
     transport = response.transport;
 
     if (response.transport == "local") {
-      subSocket.pushLocal("Name?")
+      subSocket.pushLocal("Name?");
     }
   };
 

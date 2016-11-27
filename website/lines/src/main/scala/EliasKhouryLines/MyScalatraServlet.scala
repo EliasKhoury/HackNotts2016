@@ -18,28 +18,22 @@ import java.text.SimpleDateFormat
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
+
+import org.scalatra.servlet.AsyncSupport
+
+
 class MyScalatraServlet extends ScalatraServlet 
     with ScalateSupport with JValueResult 
     with JacksonJsonSupport with SessionSupport 
     with AtmosphereSupport {
     implicit val jsonFormats: Formats = DefaultFormats
 
-  notFound {
-    // remove content type in case it was set through an action
-    contentType = null
-    // Try to render a ScalateTemplate if no route matched
-    findTemplate(requestPath) map { path =>
-      contentType = "text/html"
-      layoutTemplate(path)
-    } orElse serveStaticResource() getOrElse resourceNotFound()
-  }
-
   get("/") {
     contentType="text/html"
     layoutTemplate("index.ssp")
   }
 
-  atmosphere("/lines") {
+  atmosphere("/the-chat") {
     new AtmosphereClient {
       def receive: AtmoReceive = {
         case Connected =>
@@ -65,6 +59,16 @@ class MyScalatraServlet extends ScalatraServlet
 
   error {
     case t: Throwable => t.printStackTrace()
+  }
+
+  notFound {
+    // remove content type in case it was set through an action
+    contentType = null
+    // Try to render a ScalateTemplate if no route matched
+    findTemplate(requestPath) map { path =>
+      contentType = "text/html"
+      layoutTemplate(path)
+    } orElse serveStaticResource() getOrElse resourceNotFound()
   }
 
 }

@@ -1,12 +1,14 @@
 <% attributes("layout") = "" %>
 <html>
   <head>
-    <title>Scalatra Client </title>
-
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="js/jquery-atmosphere.js"></script>
-    <script src="js/application.js"></script>
-  
+    <title>Scalatra Atmosphere Example</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>    
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -22,9 +24,22 @@
       </div>
     </div>
 
+    <div class="row">
+        <div id="header" class="span6 offset3"><h5>Atmosphere Chat. Default transport is WebSocket, fallback is long-polling</h5></div>
+        <div id="detect" class="span6 offset3"><h5>Detecting what the browser and server are supporting</h5></div>
+        <div id="content" class="span6 offset3"></div>
+        <div class="span6 offset3">
+            <span id="status">Connecting...</span>
+            <input type="text" id="input" disabled="disabled"/>
+        </div>
+    </div>
+
     <div class="container">
 
-
-    </div>
+    </div> <!-- /container -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-atmosphere.js"></script>
+    <script src="js/application.js"></script>
   </body>
 </html>

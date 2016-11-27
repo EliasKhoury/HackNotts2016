@@ -37,7 +37,7 @@ libraryDependencies ++= Seq(
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
   "org.scalatra" %% "scalatra-atmosphere" % ScalatraVersion,
   "org.json4s"   %% "json4s-jackson" % "3.3.0",
-  "org.eclipse.jetty" % "jetty-webapp" % "8.1.8.v20121106" % "container",
+  "org.eclipse.jetty" % "jetty-webapp" % "8.1.7.v20120910" % "container;provided",
   "org.eclipse.jetty" % "jetty-websocket" % "8.1.8.v20121106" % "container;provided",
   "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container;provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
 )
