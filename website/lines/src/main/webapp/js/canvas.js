@@ -1,3 +1,4 @@
+/*
 var canvasW, canvasH
 (function() {
 
@@ -96,10 +97,7 @@ var canvasW, canvasH
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    /**
-     * Your drawings need to be inside this function otherwise they will be reset when
-     * you resize the browser window and the canvas goes will be cleared.
-     */
+
     drawStuff();
   }
   resizeCanvas();
@@ -110,90 +108,159 @@ var canvasW, canvasH
 
 })();
 
-Physics(function( world ){
-  var renderer = Physics.renderer('canvas', {
-   el: 'canvas', // id of the canvas element
-   width: 500,
-   height: 500
-});
-world.add( renderer );
+*/
 
-var player = Physics.body('circle', {
+
+var last_position = {},
+  last_angle = 0;
+
+Physics(function(world) {
+  var renderer = Physics.renderer('canvas', {
+    el: 'canvas', // id of the canvas element
+    width: 500,
+    height: 500
+  });
+  world.add(renderer);
+
+  // resize events
+  window.addEventListener('resize', function() {
+
+    viewWidth = window.innerWidth;
+    viewHeight = window.innerHeight;
+
+    renderer.el.width = viewWidth;
+    renderer.el.height = viewHeight;
+
+    // also resize the viewport edge detection bounds
+    viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
+    setBounds(viewportBounds);
+  }, true);
+
+  var player = Physics.body('circle', {
     x: 50, // x-coordinate
     y: 30, // y-coordinate
     vx: 0.2, // velocity in x-direction
     vy: 0.01, // velocity in y-direction
     radius: 20
-});
-world.add( player );
+  });
+  world.add(player);
 
-var staticObjLine = Physics.body('rectangle', {
+  var staticObjLine = Physics.body('rectangle', {
     x: 150, // x-coordinate
     y: 300, // y-coordinate
     width: 350,
     height: 10,
     treatment: 'static'
-});
-world.add(staticObjLine);
+  });
+  world.add(staticObjLine);
 
-var canvas = document.getElementById('canvas');
+  var canvas = document.getElementById('canvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-var bounds = Physics.aabb(0, 0, canvas.width, canvas.height);
+  var bounds = Physics.aabb(0, 0, canvas.width, canvas.height);
+  setBounds(bounds);
 
-world.add( Physics.behavior('edge-collision-detection', {
-    aabb: bounds,
-    restitution: 0.3
-}) );
-// ensure objects bounce when edge collision is detected
-world.add( Physics.behavior('body-impulse-response') );
-world.add( Physics.behavior('constant-acceleration') );
-world.add( Physics.behavior('body-collision-detection') );
-world.add( Physics.behavior('sweep-prune') );
+  function setBounds(bounds) {
+    world.add(Physics.behavior('edge-collision-detection', {
+      aabb: bounds,
+      restitution: 0.3
+    }));
+  };
 
-world.render();
+  // ensure objects bounce when edge collision is detected
+  world.add(Physics.behavior('body-impulse-response'));
+  world.add(Physics.behavior('constant-acceleration'));
+  world.add(Physics.behavior('body-collision-detection'));
+  world.add(Physics.behavior('sweep-prune'));
+
+  world.render();
 
 
-$("canvas").click(function(e){
-			     	// checking canvas coordinates for the mouse click
-					var offset = $(this).offset();
-					var px = e.pageX - offset.left;
-     			var py = e.pageY - offset.top;
-     				// this is the way physicsjs handles 2d vectors, similar at Box2D's b2Vec
-					var mousePos = Physics.vector();
-     				mousePos.set(px,py);
-     				// finding a body under mouse position
-     				var body = world.findOne({
-						$at: mousePos
-					})
-					// there isn't any body under mouse position, going to create a new box
-					if(!body){
-            var staticObjLine = Physics.body('rectangle', {
-                x: px, // x-coordinate
-                y: py, // y-coordinate
-                width: 350,
-                height: 10,
-                treatment: 'static'
-            });
-				     	world.add(staticObjLine);
-					}
-					else{
-						// there is a body under mouse position, let's remove it
-						//world.removeBody(body);
-					}
+  $("canvas").click(function(e) {
+    // checking canvas coordinates for the mouse click
+    var offset = $(this).offset();
+    var px = e.pageX - offset.left;
+    var py = e.pageY - offset.top;
+    // this is the way physicsjs handles 2d vectors, similar at Box2D's b2Vec
+    var mousePos = Physics.vector();
+    mousePos.set(px, py);
+    // finding a body under mouse position
+    var body = world.findOne({
+        $at: mousePos
       })
+      // there isn't any body under mouse position, going to create a new box
+    if (!body) {
+      var staticObjLine = Physics.body('rectangle', {
+        x: px, // x-coordinate
+        y: py, // y-coordinate
+        width: 350,
+        height: 10,
+        treatment: 'static'
+      });
+      //world.add(staticObjLine);
+    } else {
+      // there is a body under mouse position, let's remove it
+      //world.removeBody(body);
+    }
+  })
+
+  var mouseDown = false,
+    mouseMove = false,
+    mouseUp = false;
+
+  $("canvas").mousedown(function(e) {
+    //console.log("mouse down");
+    mouseDown = true;
+  })
+
+  $("canvas").mousemove(function(e) {
+    if (mouseDown) {
+
+      //console.log("MOVE MOUSE WITH MOUSE DOWN");
+      // checking canvas coordinates for the mouse click
+      var offset = $(this).offset();
+      var px = e.pageX - offset.left;
+      var py = e.pageY - offset.top;
+      // this is the way physicsjs handles 2d vectors, similar at Box2D's b2Vec
+      var mousePos = Physics.vector();
+      mousePos.set(px, py);
+      var staticObjBlock = Physics.body('circle', {
+        x: px, // x-coordinate
+        y: py, // y-coordinate
+        radius: 2,
+        treatment: 'static'
+      });
+      if (!world.findOne({
+          $at: mousePos
+        })) {
+        world.add(staticObjBlock);
+      }
+      last_position = {
+        x: event.clientX,
+        y: event.clientY
+      };
+      last_angle = staticObjBlock.state.angular.pos;
+    }
+
+  })
+
+  $("canvas").mouseup(function(e) {
+    //console.log("mouse up");
+    mouseDown = false;
+  })
 
 
 
+  Physics.util.ticker.on(function(time, dt) {
+    world.step(time);
+  });
 
-Physics.util.ticker.on(function( time, dt ){
-    world.step( time );
-});
+  // start the ticker
+  Physics.util.ticker.start();
 
-// start the ticker
-Physics.util.ticker.start();
-
-world.on('step', function(){
+  world.on('step', function() {
     world.render();
-});
+  });
 
 });
