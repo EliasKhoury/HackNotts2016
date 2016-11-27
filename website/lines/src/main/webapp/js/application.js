@@ -8,6 +8,7 @@ $(function() {
   var status = $('#status');
   var myName = false;
   var author = null;
+  var ball   = null;
   var logged = false;
   var socket = $.atmosphere;
   var subSocket;
@@ -22,15 +23,7 @@ $(function() {
     fallbackTransport: 'long-polling'
   };
 
-  var balls = [1, 2, 3, 4, 5];
-
-  var players = [
-      [1, 2],
-      [3, 4],
-      [5, 6],
-      [7, 8],
-      [9, 10]
-    ],
+  var balls = [],
     cPlayer = 0,
     currentPlayers = 0,
     currentPlayer = 0,
@@ -43,27 +36,20 @@ $(function() {
       }
     }); */
 
-  function createPlayer(player) {
+  function createPlayer(x1,y1,colour) {
     var player = Physics.body('circle', {
-      x: player[1].x, // x-coordinate
-      y: player[1].y, // y-coordinate
+      x: x1, // x-coordinate
+      y: y1, // y-coordinate
       vx: 0.2, // velocity in x-direction
       vy: 0.01, // velocity in y-direction
       radius: 20
     });
-    return player;
-  }
 
-  function addPlayer(colour, x, y, cplayer) {
-    players[cPlayer][0] = colour;
-    players[cPlayer][1] = {
-      "x": x,
-      "y": y,
-      "currentPlayers": currentPlayers
-    };
-    balls[cplayer] = createPlayer(players[currentPlayer]);
-    currentPlayers += 1;
-    world.add(balls[cplayer]);
+    //player.fill(colour)
+
+    world.add(player);
+    return player;
+
   }
 
   request.onOpen = function(response) {
@@ -73,21 +59,40 @@ $(function() {
     input.removeAttr('disabled').focus();
     status.text('Choose name:'); */
     author = getRandomColor();
-    addPlayer(author, 50, 50, currentPlayer);
+    ball = createPlayer(50,50,author);
+
+    balls.push({"obj" : ball, "colour" : author});
+
+      var xpos = ball.state.pos.x;
+      var ypos = ball.state.pos.y;
 
     var sendConnect = {
-      author: author,
-      message: players
+      "author": author,
+      "message": xpos + " " + ypos
     };
-
     subSocket.push(jQuery.stringifyJSON(sendConnect));
-
-    transport = response.transport;
-
-    if (response.transport == "local") {
-      subSocket.pushLocal("Name?");
-    }
   };
+
+
+var refresh = function(){
+
+    if (ball != null) {
+        var xpos = ball.state.pos.x; 
+        var ypos = ball.state.pos.y;
+
+      var sendConnect = {
+        "author": author,
+        "message": xpos + " " + ypos
+      };
+
+
+      subSocket.push(jQuery.stringifyJSON(sendConnect));
+
+    }
+};
+
+setInterval(refresh,100);
+
 
   request.onReconnect = function(rq, rs) {
     socket.info("Reconnecting")
@@ -95,20 +100,41 @@ $(function() {
 
   request.onMessage = function(rs) {
 
-    // We need to be logged first.
-    if (!myName) return;
-
     var message = rs.responseBody;
     try {
       var json = jQuery.parseJSON(message);
-      players = json.players;
-      currentPlayers = players[currentPlayer][1].currentPlayers;
-      updatePlayers();
-      console.log("got a message")
-      console.log(json)
+      var colour = json.author;
+
+      var posString = json.message;
+      var positions = posString.split(" ");
+
+      var newX = positions[0];
+      var newY = positions[1];
+
+      var exists = false;
+
+      balls.forEach(function(bball){
+        if (bball.colour == colour) {
+
+          exists = true;
+          bball.obj.state.pos.x = newX;
+          bball.obj.state.pos.y = newY;
+          bball.obj.state.vx = 0;
+          bball.obj.state.vy = 0;
+          console.log(bball.obj.state.vy);
+
+        }
+      });
+
+      if (!exists) {
+        var ball = createPlayer(newX,newY,author);
+
+        balls.push({"obj" : ball, "colour" : colour});
+      }
+
     } catch (e) {
       console.log('This doesn\'t look like a valid JSON object: ',
-        message.data);
+        message);
       return;
     }
 
@@ -122,7 +148,7 @@ $(function() {
       var me = json.author == author;
       var date = typeof(json.time) == 'string' ? parseInt(json.time) :
         json.time;
-      addMessage(json.author, json.message, me ? 'blue' : 'black', new Date(
+      addMessage(json.author, json.xPos, me ? 'blue' : 'black', new Date(
         date));
     }
   };
@@ -139,37 +165,6 @@ $(function() {
   };
 
   subSocket = socket.subscribe(request);
-
-  input.keydown(function(e) {
-    if (e.keyCode === 13) {
-      var msg = $(this).val();
-
-      // First message is always the author's name
-      if (author == null) {
-        author = msg;
-      }
-
-      var json = {
-        author: author,
-        message: msg
-      };
-
-      subSocket.push(jQuery.stringifyJSON(json));
-      $(this).val('');
-
-
-      if (myName === false) {
-        myName = msg;
-        logged = true;
-        status.text(myName + ': ').css('color', 'blue');
-        input.removeAttr('disabled').focus();
-        subSocket.pushLocal(myName);
-      } else {
-        //        input.attr('disabled', 'disabled');
-        addMessage(author, msg, 'blue', new Date);
-      }
-    }
-  });
 
   function updatePlayers() {
     balls.forEach(function(element, i) {

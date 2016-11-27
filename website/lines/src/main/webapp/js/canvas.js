@@ -279,8 +279,10 @@ Physics(function() {
   // start the ticker
   Physics.util.ticker.start();
 
+
   world.on('step', function() {
     world.render();
   });
+
 
 });
