@@ -9,7 +9,22 @@
     That class should implement org.scalatra.LifeCycle.  Your app can be
     configured in Scala code there.
   -->
+
   <listener>
     <listener-class>org.scalatra.servlet.ScalatraListener</listener-class>
   </listener>
+
+  <init-param>
+      <param-name>org.atmosphere.useStream</param-name>
+      <param-value>false</param-value>
+  </init-param>
+
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/img/*</url-pattern>
+    <url-pattern>/css/*</url-pattern>
+    <url-pattern>/js/*</url-pattern>
+    <url-pattern>/assets/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>
