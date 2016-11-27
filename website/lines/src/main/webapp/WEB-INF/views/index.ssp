@@ -10,9 +10,9 @@
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
-    </style> 
-    </style>   
-  
+    </style>
+    </style>
+
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -43,11 +43,10 @@
     <script src="js/physicsjs-full.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.atmosphere.js"></script>
-    <script src="js/application.js"></script>
     <script src="js/canvas.js"></script>
+    <script src="js/application.js"></script>
 
 
     <canvas id="canvas"style="border:0px solid #000000;"></canvas>
   </body>
 </html>
-

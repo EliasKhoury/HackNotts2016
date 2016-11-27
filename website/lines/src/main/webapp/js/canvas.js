@@ -111,14 +111,34 @@ var canvasW, canvasH
 */
 
 
-var last_position = {},
-  last_angle = 0;
+var last_position = {};
 
-Physics(function(world) {
+
+var world;
+
+
+
+Physics(function() {
+  world = this;
   var renderer = Physics.renderer('canvas', {
     el: 'canvas', // id of the canvas element
     width: 500,
-    height: 500
+    height: 500,
+    styles: {
+      // set colors for the circle bodies
+      'player': {
+        strokeStyle: 'hsla(60, 37%, 17%, 1)',
+        lineWidth: 1,
+        fillStyle: 'hsla(60, 37%, 57%, 0.8)',
+        angleIndicator: 'hsla(60, 37%, 17%, 0.4)'
+      },
+      'rectangle': {
+        strokeStyle: 'hsla(60, 37%, 17%, 1)',
+        lineWidth: 1,
+        fillStyle: 'hsla(100, 37%, 57%, 0.8)',
+        angleIndicator: 'hsla(60, 37%, 17%, 0.4)'
+      }
+    }
   });
   world.add(renderer);
 
@@ -143,7 +163,7 @@ Physics(function(world) {
     vy: 0.01, // velocity in y-direction
     radius: 20
   });
-  world.add(player);
+  //world.add(player);
 
   var staticObjLine = Physics.body('rectangle', {
     x: 150, // x-coordinate
