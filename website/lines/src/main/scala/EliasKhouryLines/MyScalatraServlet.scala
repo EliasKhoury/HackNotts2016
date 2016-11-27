@@ -24,11 +24,6 @@ class MyScalatraServlet extends ScalatraServlet
     with AtmosphereSupport {
     implicit val jsonFormats: Formats = DefaultFormats
 
-  get("/") {
-    contentType="text/html"
-    layoutTemplate("index.ssp")
-  }
-
   notFound {
     // remove content type in case it was set through an action
     contentType = null
@@ -37,6 +32,11 @@ class MyScalatraServlet extends ScalatraServlet
       contentType = "text/html"
       layoutTemplate(path)
     } orElse serveStaticResource() getOrElse resourceNotFound()
+  }
+
+  get("/") {
+    contentType="text/html"
+    layoutTemplate("index.ssp")
   }
 
   atmosphere("/lines") {
