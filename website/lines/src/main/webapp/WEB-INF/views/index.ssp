@@ -43,5 +43,10 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.atmosphere.js"></script>
     <script src="js/application.js"></script>
+    <script src="js/canvas.js"></script>
+
+
+    <canvas id="canvas"style="border:0px solid #000000;"></canvas>
   </body>
 </html>
+
